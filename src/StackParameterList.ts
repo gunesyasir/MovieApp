@@ -1,4 +1,6 @@
+import { Movie } from "./RequestManager";
+
 export type StackParameterList = {
-  DetailScreen: undefined;
+  DetailScreen: {movie: Movie};
   HomeScreen: undefined;
 };
