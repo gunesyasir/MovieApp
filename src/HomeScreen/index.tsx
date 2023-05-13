@@ -6,22 +6,13 @@ import {StackParameterList} from '../StackParameterList';
 import styles from './styles';
 import ScrollableComponent from '../CustomFlatList';
 import {Movie, fetchMovieDataBasedOnGenre} from '../RequestManager';
+import { MovieGenreCodes } from '../constants/Enums';
 
 type HomeScreenProps = NativeStackScreenProps<
   StackParameterList,
   'DetailScreen'
 >;
 
-enum MovieGenreCodes {
-  ACTION = 28,
-  ADVENTURE = 12,
-  COMEDY = 35,
-  DOCUMENTARY = 99,
-  DRAMA = 18,
-  FANTASY = 14,
-  HISTORY = 36,
-  HORROR = 27,
-}
 
 export const HomeScreen = (props: HomeScreenProps) => {
   const [actionMovies, setActionMovies] = useState<Movie[]>();
@@ -29,9 +20,9 @@ export const HomeScreen = (props: HomeScreenProps) => {
   const [horrorMovies, setHorrorMovies] = useState<Movie[]>();
 
   useEffect(() => {
-    fetchData(MovieGenreCodes.HORROR, response => setHorrorMovies(response))
-    fetchData(MovieGenreCodes.DRAMA, response => setDramaMovies(response))
-    fetchData(MovieGenreCodes.ACTION, response => setActionMovies(response))
+    fetchData(MovieGenreCodes.Horror, response => setHorrorMovies(response))
+    fetchData(MovieGenreCodes.Drama, response => setDramaMovies(response))
+    fetchData(MovieGenreCodes.Action, response => setActionMovies(response))
   }, []);
 
   const fetchData = async (genreId: number, onResponseReceived: (movies: Movie[]) => void ) => {
