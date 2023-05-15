@@ -7,14 +7,15 @@ import styles from './styles';
 import ScrollableComponent from '../CustomFlatList';
 import {Movie, fetchMovieDataBasedOnGenre} from '../RequestManager';
 import { MovieGenreCodes } from '../constants/Enums';
+import { StackScreenProps } from '@react-navigation/stack';
 
-type HomeScreenProps = NativeStackScreenProps<
+type HomeScreenProps = StackScreenProps<
   StackParameterList,
-  'DetailScreen'
+  'HomeScreen'
 >;
 
 
-export const HomeScreen = (props: HomeScreenProps) => {
+const HomeScreen = (props: HomeScreenProps) => {
   const [actionMovies, setActionMovies] = useState<Movie[]>();
   const [dramaMovies, setDramaMovies] = useState<Movie[]>();
   const [horrorMovies, setHorrorMovies] = useState<Movie[]>();
@@ -54,3 +55,5 @@ export const HomeScreen = (props: HomeScreenProps) => {
     </ScrollView>
   );
 };
+
+export default HomeScreen;

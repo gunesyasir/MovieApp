@@ -7,9 +7,9 @@ import {IMAGE_BASE_URL} from '../CustomFlatList';
 import {Assets} from '../constants/Assets';
 import {MovieGenreCodes} from '../constants/Enums';
 
-type Props = StackScreenProps<StackParameterList, 'DetailScreen'>;
+type Props = StackScreenProps<StackParameterList, "DetailScreen">;
 
-export const DetailScreen = (props: Props) => {
+const DetailScreen = (props: Props) => {
   props.navigation.setOptions({header: () => <View style={{height: 0}} />});
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   console.log(props.route.params.movie);
@@ -64,3 +64,5 @@ export const DetailScreen = (props: Props) => {
     </View>
   );
 };
+
+export default DetailScreen;
