@@ -4,12 +4,14 @@ import React from 'react';
 import { StyleSheet, View, Image } from 'react-native';
 import HomeScreen from './HomeScreen';
 import DetailScreen from './DetailScreen';
+import DiscoverScreen from './DiscoverScreen';
 import {
   SafeAreaInsetsContext,
   SafeAreaProvider,
 } from 'react-native-safe-area-context';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Assets } from './constants/Assets';
+import ProfileScreen from './ProfileScreen';
 
 const getTabBarOptions = (route, insets) => ({
   title: 'Welcome',
@@ -34,7 +36,7 @@ const getTabBarOptions = (route, insets) => ({
             />
         </View>
       );
-    } else if (route.name === "Discover") {
+    } else if (route.name === "DiscoverScreen") {
       return (
         <View style={styles.iconContainer}>
           <Image
@@ -78,12 +80,8 @@ const TabBar = () => {
             options={{headerShown: false}}
           />
           <Tab.Screen
-            name={"Profile"}
-            component={() => {
-              return(
-                <View style={{flex:1}}/>
-              )
-            }}
+            name={"ProfileScreen"}
+            component={ProfileScreen}
             options={{headerShown: false}}
           />
         </Tab.Navigator>
