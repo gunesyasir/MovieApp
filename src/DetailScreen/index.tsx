@@ -47,7 +47,7 @@ const DetailScreen = (props: Props) => {
 
   const getGenreName = (value: number) => {
     return (
-      <Text style={styles.genre}>
+      <Text style={styles.genre} key={value}>
         {Object.keys(MovieGenreCodes).find(
           key => MovieGenreCodes[key] === value,
         )}

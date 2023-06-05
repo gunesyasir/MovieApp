@@ -14,6 +14,7 @@ import {Assets} from './constants/Assets';
 import ProfileScreen from './ProfileScreen';
 import LoginScreen from './LoginScreen';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FriendScreen from './FriendScreen';
 
 const getTabBarOptions = (route, insets) => ({
   tabBarShowLabel: false,
@@ -115,6 +116,7 @@ const NavigationStack = () => {
               <Stack.Screen name="LoginScreen" component={LoginScreen} />
               <Stack.Screen name="TabScreen" component={TabBar} />
               <Stack.Screen name="DetailScreen" component={DetailScreen} />
+              <Stack.Screen name="FriendScreen" component={FriendScreen} />
             </Stack.Navigator>
           </NavigationContainer>
         </SafeAreaProvider>
