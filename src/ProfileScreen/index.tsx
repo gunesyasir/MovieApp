@@ -6,21 +6,15 @@ import {
   FlatList,
   View,
 } from 'react-native';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import styles from './styles';
+import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 type ProfileScreenProps = StackScreenProps<StackParameterList, 'ProfileScreen'>;
 
-interface Friend {
-  name: string;
-}
-
 const ProfileScreen = (props: ProfileScreenProps) => {
-  const [friends, setFriends] = useState<Friend[]>([
-    {name: 'John'},
-    {name: 'Jane'},
-    {name: 'Mark'},
-  ]);
+  const [friends, setFriends] = useState<string[]>([]);
 
   // make this Moviee
   const [movies, setMovies] = useState<string[]>([
@@ -40,11 +34,35 @@ const ProfileScreen = (props: ProfileScreenProps) => {
     'Item 2',
     'Item 3',
   ]);
+  const [username, setUsername] = useState<string>(''); 
 
-  const renderFriendItem = (friend: Friend) => {
+  useEffect(() => {
+    findUser();
+  }, [])
+
+  useEffect(() => {
+    if (username != '') {
+      fetchFriends();
+    }
+  }, [username])
+
+  const fetchFriends = () => {
+    const ref = database()
+      .ref(`users/${username}/friends`)
+      ref.on('value', snapshot => {
+        const data = snapshot.val();
+        setFriends(Object.values(data)); 
+      })
+  }
+
+  const findUser = async () => {
+    setUsername((await AsyncStorage.getItem('username')) ?? '');
+  };
+
+  const renderFriendItem = (friend: string) => {
     return (
-      <TouchableOpacity onPress={() => console.log(`${friend.name} clicked`)}>
-        <Text>{friend.name}</Text>
+      <TouchableOpacity onPress={() => console.log(`${friend} clicked`)}>
+        <Text>{friend}</Text>
       </TouchableOpacity>
     );
   };

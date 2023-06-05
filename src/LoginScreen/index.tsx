@@ -4,8 +4,8 @@ import {Assets} from '../constants/Assets';
 import styles from './styles';
 import {StackScreenProps} from '@react-navigation/stack';
 import {StackParameterList} from '../StackParameterList';
-import {CommonActions} from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import database from '@react-native-firebase/database';
 
 type LoginScreenProps = StackScreenProps<StackParameterList, 'ProfileScreen'>;
 
@@ -15,13 +15,19 @@ const LoginScreen = (props: LoginScreenProps) => {
   const sendUserInfo = async () => {
     if (username != '') {
       await AsyncStorage.setItem('isLoggedIn', 'true');
-      props.navigation.dispatch(
-        CommonActions.reset({
+      await AsyncStorage.setItem('username', username);
+
+      const ref = database().ref('users')
+
+      ref.child(username).set({
+        username: username
+      }).then(() => {
+        props.navigation.reset({
           index: 0,
           routes: [{name: 'TabScreen'}],
-        }),
-      );
-    }
+        });
+      })
+    };
   };
 
   return (

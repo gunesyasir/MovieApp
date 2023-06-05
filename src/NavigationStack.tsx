@@ -111,7 +111,7 @@ const NavigationStack = () => {
       {isResponseArrived && (
         <SafeAreaProvider>
           <NavigationContainer>
-            <Stack.Navigator initialRouteName={initialScreenName}>
+            <Stack.Navigator initialRouteName={initialScreenName} screenOptions={{headerShown: false}} >
               <Stack.Screen name="LoginScreen" component={LoginScreen} />
               <Stack.Screen name="TabScreen" component={TabBar} />
               <Stack.Screen name="DetailScreen" component={DetailScreen} />

@@ -1,6 +1,17 @@
 import {StyleSheet} from 'react-native';
 
 export default StyleSheet.create({
+  closeButton: {
+    position: 'absolute',
+    marginTop: 20,
+    marginStart: 20,
+    padding: 5
+  },
+  closeImage: {
+    width: 30, 
+    height: 30, 
+    tintColor: 'white'
+  },
   genre: {
     color: 'white',
     marginTop: 10,

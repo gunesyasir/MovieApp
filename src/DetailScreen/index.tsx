@@ -1,18 +1,49 @@
-import React, {useState} from 'react';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import React, {useEffect, useState} from 'react';
+import {View, Text, TouchableOpacity, Image, BackHandler} from 'react-native';
 import styles from './styles';
 import {StackParameterList} from '../StackParameterList';
 import {StackScreenProps} from '@react-navigation/stack';
 import {IMAGE_BASE_URL} from '../CustomFlatList';
 import {Assets} from '../constants/Assets';
 import {MovieGenreCodes} from '../constants/Enums';
+import database from '@react-native-firebase/database';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-type Props = StackScreenProps<StackParameterList, "DetailScreen">;
+type Props = StackScreenProps<StackParameterList, 'DetailScreen'>;
 
 const DetailScreen = (props: Props) => {
-  props.navigation.setOptions({header: () => <View style={{height: 0}} />});
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
-  console.log(props.route.params.movie);
+  const [username, setUsername] = useState<string>('');
+  useEffect(() => {
+    checkPreviousStatus();
+    findUser();
+    const onBackPressed = () => {
+      handleDismiss();
+      return true;
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      onBackPressed,
+    );
+
+    return () => backHandler.remove();
+  }, []);
+
+  const checkPreviousStatus = () => {
+    database()
+      .ref(`users/${username}/movies/`)
+      .child(props.route.params.movie.id.toString())
+      .once('value', snap => {
+        if (snap.val()){
+          setIsFavorited(true);
+        }
+      })
+  };
+
+  const findUser = async () => {
+    setUsername(await AsyncStorage.getItem('username') ?? '')
+  };
 
   const getGenreName = (value: number) => {
     return (
@@ -24,12 +55,43 @@ const DetailScreen = (props: Props) => {
     );
   };
 
+  const handleDismiss = () => {
+    if (props.navigation.canGoBack()) {
+      props.navigation.goBack();
+    }
+  };
+
+  const setFavorite = () => {
+    if (isFavorited) {
+      setIsFavorited(false);
+
+      database()
+      .ref('users')
+      .child(username)
+      .child('movies')
+      .child(props.route.params.movie.id.toString())
+      .remove();
+    } else {
+      setIsFavorited(true);
+
+      database()
+      .ref(`users/${username}/movies`)
+      .child(props.route.params.movie.id.toString())
+      .set(props.route.params.movie);
+    }
+  }
+
   return (
     <View style={styles.view}>
       <Image
         style={styles.image}
         source={{uri: IMAGE_BASE_URL + props.route.params.movie.backdrop_path}}
       />
+
+      <TouchableOpacity onPress={handleDismiss} style={styles.closeButton}>
+        <Image style={styles.closeImage} source={Assets.closeIcon} />
+      </TouchableOpacity>
+
       <View style={styles.movieInfoContainer}>
         <View style={styles.upperContainer}>
           <View style={styles.scoreContainer}>
@@ -41,7 +103,7 @@ const DetailScreen = (props: Props) => {
               {props.route.params.movie.vote_count}
             </Text>
           </View>
-          <TouchableOpacity onPress={() => setIsFavorited(!isFavorited)}>
+          <TouchableOpacity onPress={setFavorite}>
             <Image
               style={styles.heartIcon}
               source={isFavorited ? Assets.heartFilledIcon : Assets.heartIcon}
@@ -54,12 +116,10 @@ const DetailScreen = (props: Props) => {
           {props.route.params.movie.genre_ids.map(getGenreName)}
           <Text style={styles.genre}>•</Text>
           <Text style={styles.genre}>
-            {props.route.params.movie.release_date.substring(0,4)}
+            {props.route.params.movie.release_date.substring(0, 4)}
           </Text>
         </View>
-        <Text style={styles.overview}>
-            {props.route.params.movie.overview}
-          </Text>
+        <Text style={styles.overview}>{props.route.params.movie.overview}</Text>
       </View>
     </View>
   );

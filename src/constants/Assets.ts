@@ -1,4 +1,6 @@
 export enum Assets {
+    addUser = require('../assets/add-user.png'),
+    closeIcon = require('../assets/closeIcon.png'),
     heartIcon = require('../assets/heart.png'),
     heartFilledIcon = require('../assets/heart_filled.png'),
     homeIcon = require('../assets/home.png'),
