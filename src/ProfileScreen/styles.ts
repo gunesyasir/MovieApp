@@ -9,9 +9,6 @@ export default StyleSheet.create({
     borderRadius: 10,
     backgroundColor: 'white'
   },
-  friendItem: {
-    
-  },
   itemCard: {
     height: 50,
     backgroundColor: '#F6F2F2', 
@@ -19,9 +16,6 @@ export default StyleSheet.create({
     paddingHorizontal: 5,
     borderRadius: 5,
     justifyContent: 'center',
-  },
-  movieItem: {
-    
   },
   text: {
     color: 'white',

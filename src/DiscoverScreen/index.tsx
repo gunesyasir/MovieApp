@@ -14,6 +14,7 @@ type DiscoverScreenProps = StackScreenProps<
 >;
 
 const DiscoverScreen = (props: DiscoverScreenProps) => {
+  const [friends, setFriends] = useState<string[]>([]);
   const [matchingUsernames, setMatchingUsernames] = useState<string[]>([]);
   const [searchText, setSearchText] = useState<string>('');
   const [username, setUsername] = useState<string>('');
@@ -23,10 +24,26 @@ const DiscoverScreen = (props: DiscoverScreenProps) => {
   }, []);
 
   useEffect(() => {
+    if (username != '') {
+      fetchFriends();
+    }
+  }, [username]);
+
+  useEffect(() => {
     if (searchText !== '') {
       handleSearch(searchText);
     }
   }, [searchText]);
+
+  const fetchFriends = () => {
+    const ref = database().ref(`users/${username}/friends`);
+    ref.on('value', snapshot => {
+      const data = snapshot.val();
+      if (data != null) {
+        setFriends(Object.values(data));
+      }
+    });
+  };
 
   const findUser = async () => {
     setUsername((await AsyncStorage.getItem('username')) ?? '');
@@ -58,7 +75,8 @@ const DiscoverScreen = (props: DiscoverScreenProps) => {
       return (
         <View style={styles.userCard}>
           <Text style={styles.username}>{name}</Text>
-          <TouchableOpacity
+          {!friends.includes(name) ? (
+            <TouchableOpacity
             onPress={() => sendFriendshipRequest(name)}
             style={styles.addButton}>
             <Image
@@ -67,6 +85,10 @@ const DiscoverScreen = (props: DiscoverScreenProps) => {
               resizeMode="contain"
             />
           </TouchableOpacity>
+          ) : 
+          <Text style={[styles.username, {fontSize: 11}]}>You're already following.</Text>
+          }
+          
         </View>
       );
     } else return null;

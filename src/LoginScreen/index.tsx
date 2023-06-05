@@ -17,17 +17,31 @@ const LoginScreen = (props: LoginScreenProps) => {
       await AsyncStorage.setItem('isLoggedIn', 'true');
       await AsyncStorage.setItem('username', username);
 
-      const ref = database().ref('users')
+      const userRef = database().ref(`users/${username}`);
+      userRef.on('value', snapshot => {
+        console.log('is user exists: ', snapshot.exists());
 
-      ref.child(username).set({
-        username: username
-      }).then(() => {
-        props.navigation.reset({
-          index: 0,
-          routes: [{name: 'TabScreen'}],
-        });
-      })
-    };
+        if (snapshot.exists()) {
+          props.navigation.reset({
+            index: 0,
+            routes: [{name: 'TabScreen'}],
+          }); 
+        } else {
+          database()
+            .ref('users')
+            .child(username)
+            .set({
+              username: username,
+            })
+            .then(() => {
+              props.navigation.reset({
+                index: 0,
+                routes: [{name: 'TabScreen'}],
+              });
+            });
+        }
+      });
+    }
   };
 
   return (
@@ -39,7 +53,7 @@ const LoginScreen = (props: LoginScreenProps) => {
           placeholderTextColor={'#a7a7a7'}
           underlineColorAndroid={'#a7a7a7'}
           value={username}
-          onChangeText={text => setUsername(text)}
+          onChangeText={text => setUsername(text.trim())}
           style={{color: '#a7a7a7'}}
         />
         <TouchableOpacity style={styles.button} onPress={sendUserInfo}>

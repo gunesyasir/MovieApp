@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useEffect, useState} from 'react';
-import {Text, TouchableOpacity, FlatList} from 'react-native';
+import {Text, TouchableOpacity, FlatList, View} from 'react-native';
 import {StackParameterList} from '../StackParameterList';
 import {StackScreenProps} from '@react-navigation/stack';
 import styles from './styles';
@@ -28,21 +28,61 @@ const FriendScreen = (props: FriendScreenProps) => {
 
   const renderMovieItem = (item: Movie) => {
     return (
-      <TouchableOpacity
-        style={styles.movieItem}
-        onPress={() => props.navigation.navigate('DetailScreen', {movie: item})}>
-        <Text style={[styles.text, {color: '#17181B'}]}>{item.title}</Text>
-      </TouchableOpacity>
+      <View
+        style={{
+          height: 50,
+          backgroundColor: '#F6F2F2',
+          marginVertical: 3,
+          paddingHorizontal: 5,
+          borderRadius: 5,
+          justifyContent: 'center',
+        }}>
+        <TouchableOpacity
+          onPress={() =>
+            props.navigation.navigate('DetailScreen', {movie: item})
+          }>
+          <Text
+            style={{
+              fontWeight: 'bold',
+              fontSize: 21,
+              color: '#17181B',
+            }}>
+            {item.title}
+          </Text>
+        </TouchableOpacity>
+      </View>
     );
   };
 
   return (
-    <FlatList
-      style={styles.view}
-      data={movies}
-      renderItem={({item}) => renderMovieItem(item)}
-      keyExtractor={(_, index) => index.toString()}
-    />
+    <View style={{flex: 1, backgroundColor: '#17181B'}}>
+      <View
+        style={{
+          flex: 1,
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}>
+        <Text style={{color: 'white', fontSize: 32}}>
+          {props.route.params.friend}
+        </Text>
+      </View>
+      <View
+        style={{
+          flex: 7,
+          borderWidth: 2,
+          margin: 10,
+          padding: 5,
+          borderRadius: 10,
+          backgroundColor: 'white',
+        }}>
+        <FlatList
+          data={movies}
+          renderItem={({item}) => renderMovieItem(item)}
+          keyExtractor={(_: Movie, index: number) => index.toString()}
+          style={{marginBottom: 10}}
+        />
+      </View>
+    </View>
   );
 };
 
