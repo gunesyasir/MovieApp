@@ -8,9 +8,9 @@ import {Assets} from '../constants/Assets';
 import {MovieGenreCodes} from '../constants/Enums';
 import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Colors } from 'react-native/Libraries/NewAppScreen';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { FlatList } from 'react-native-gesture-handler';
+import {Colors} from 'react-native/Libraries/NewAppScreen';
+import {SafeAreaView} from 'react-native-safe-area-context';
+import {FlatList} from 'react-native-gesture-handler';
 
 type Props = StackScreenProps<StackParameterList, 'DetailScreen'>;
 
@@ -18,6 +18,7 @@ const DetailScreen = (props: Props) => {
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
   const [friendReviews, setFriendReviews] = useState<Array<any>>([]);
+
   useEffect(() => {
     checkPreviousStatus();
     findUser(checkReviews);
@@ -48,30 +49,33 @@ const DetailScreen = (props: Props) => {
   const checkReviews = (username: string) => {
     if (username !== '') {
       database()
-      .ref('users')
-      .child(username)
-      .child('friends')
-      .once('value', snap => {
-        Object.keys(snap.val()).map(username => {
-          database()
-            .ref('users')
-            .child(username)
-            .child('reviews')
-            .once('value', snap => {
-              if (snap.val()) {
-                if (snap.hasChild(props.route.params.movie.id.toString())) {
-                  console.log(props.route.params.movie.id.toString());
-                  setFriendReviews(prevState => [...prevState, snap.val()[props.route.params.movie.id.toString()]])
+        .ref('users')
+        .child(username)
+        .child('friends')
+        .once('value', snap => {
+          Object.keys(snap.val()).map(username => {
+            database()
+              .ref('users')
+              .child(username)
+              .child('reviews')
+              .once('value', snap => {
+                if (snap.val()) {
+                  if (snap.hasChild(props.route.params.movie.id.toString())) {
+                    console.log(snap.val()[props.route.params.movie.id.toString()])
+                    setFriendReviews(prevState => [
+                      ...prevState,
+                      {name: username, review: snap.val()[props.route.params.movie.id.toString()].review},
+                    ]);
+                  }
                 }
-              }
-            })
-        })
-      })
+              });
+          });
+        });
     }
-  }
+  };
 
   const findUser = async (callback: (username: string) => void) => {
-    const username = await AsyncStorage.getItem('username') ?? '';
+    const username = (await AsyncStorage.getItem('username')) ?? '';
     setUsername(username);
     callback(username);
   };
@@ -97,20 +101,29 @@ const DetailScreen = (props: Props) => {
       setIsFavorited(false);
 
       database()
-      .ref('users')
-      .child(username)
-      .child('movies')
-      .child(props.route.params.movie.id.toString())
-      .remove();
+        .ref('users')
+        .child(username)
+        .child('movies')
+        .child(props.route.params.movie.id.toString())
+        .remove();
     } else {
       setIsFavorited(true);
 
       database()
-      .ref(`users/${username}/movies`)
-      .child(props.route.params.movie.id.toString())
-      .set(props.route.params.movie);
+        .ref(`users/${username}/movies`)
+        .child(props.route.params.movie.id.toString())
+        .set(props.route.params.movie);
     }
-  }
+  };
+
+  const renderReviewItem = (item: {name: string, review: string}) => {
+    return (
+      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15, height: 50}}>
+        <Text style={{color: 'black', paddingStart: 15}}>{item.name}</Text>
+        <Text style={{color: 'black', paddingStart: 15}}>{item.review}</Text>
+      </View>
+    );
+  };
 
   return (
     <View style={styles.view}>
@@ -152,6 +165,22 @@ const DetailScreen = (props: Props) => {
         </View>
         <Text style={styles.overview}>{props.route.params.movie.overview}</Text>
       </View>
+
+      {friendReviews.length !== 0 && (
+        <View
+          style={{
+            flex: 1,
+            margin: 10,
+            backgroundColor: 'white',
+            borderRadius: 30,
+          }}>
+          <FlatList
+            data={friendReviews}
+            renderItem={({item}) => renderReviewItem(item)}
+            keyExtractor={(_, index) => index.toString()}
+          />
+        </View>
+      )}
     </View>
   );
 };
