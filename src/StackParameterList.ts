@@ -7,4 +7,5 @@ export type StackParameterList = {
   HomeScreen: undefined;
   ProfileScreen: undefined;
   TabScreen: undefined;
+  ReviewScreen: {movieID: string, userName: string};
 };

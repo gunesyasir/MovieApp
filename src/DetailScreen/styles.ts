@@ -27,10 +27,10 @@ export default StyleSheet.create({
     marginEnd: 15,
   },
   image: {
-    flex: 1,
+    flex: 2,
   },
   movieInfoContainer: {
-    flex: 1,
+    flex: 2,
   },
   movieScoreContainer: {
     width: 100,
@@ -47,6 +47,15 @@ export default StyleSheet.create({
     fontSize: 14,
     fontWeight: '400',
     opacity: 0.5,
+  },
+  reviewButton: {
+    backgroundColor: 'white', 
+    width: 100, 
+    height: 40, 
+    borderRadius: 150, 
+    marginRight: 15, 
+    alignItems: "center", 
+    justifyContent: "center"
   },
   scoreContainer: {
     flexDirection: 'row',
@@ -69,6 +78,11 @@ export default StyleSheet.create({
     fontSize: 20,
     fontWeight: '600'
   },
+  titleContainer: {
+    flexDirection: 'row', 
+    alignItems: "center", 
+    justifyContent: "space-between"
+},
   upperContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',

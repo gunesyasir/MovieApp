@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, {useEffect, useState} from 'react';
 import {ScrollView} from 'react-native';
-import {NativeStackScreenProps} from '@react-navigation/native-stack';
 import {StackParameterList} from '../StackParameterList';
 import styles from './styles';
 import ScrollableComponent from '../CustomFlatList';

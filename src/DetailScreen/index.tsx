@@ -8,15 +8,19 @@ import {Assets} from '../constants/Assets';
 import {MovieGenreCodes} from '../constants/Enums';
 import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Colors } from 'react-native/Libraries/NewAppScreen';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { FlatList } from 'react-native-gesture-handler';
 
 type Props = StackScreenProps<StackParameterList, 'DetailScreen'>;
 
 const DetailScreen = (props: Props) => {
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
+  const [friendReviews, setFriendReviews] = useState<Array<any>>([]);
   useEffect(() => {
     checkPreviousStatus();
-    findUser();
+    findUser(checkReviews);
     const onBackPressed = () => {
       handleDismiss();
       return true;
@@ -35,14 +39,41 @@ const DetailScreen = (props: Props) => {
       .ref(`users/${username}/movies/`)
       .child(props.route.params.movie.id.toString())
       .once('value', snap => {
-        if (snap.val()){
+        if (snap.val()) {
           setIsFavorited(true);
         }
-      })
+      });
   };
 
-  const findUser = async () => {
-    setUsername(await AsyncStorage.getItem('username') ?? '')
+  const checkReviews = (username: string) => {
+    if (username !== '') {
+      database()
+      .ref('users')
+      .child(username)
+      .child('friends')
+      .once('value', snap => {
+        Object.keys(snap.val()).map(username => {
+          database()
+            .ref('users')
+            .child(username)
+            .child('reviews')
+            .once('value', snap => {
+              if (snap.val()) {
+                if (snap.hasChild(props.route.params.movie.id.toString())) {
+                  console.log(props.route.params.movie.id.toString());
+                  setFriendReviews(prevState => [...prevState, snap.val()[props.route.params.movie.id.toString()]])
+                }
+              }
+            })
+        })
+      })
+    }
+  }
+
+  const findUser = async (callback: (username: string) => void) => {
+    const username = await AsyncStorage.getItem('username') ?? '';
+    setUsername(username);
+    callback(username);
   };
 
   const getGenreName = (value: number) => {
