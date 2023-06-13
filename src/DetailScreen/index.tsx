@@ -15,7 +15,7 @@ type Props = StackScreenProps<StackParameterList, 'DetailScreen'>;
 const DetailScreen = (props: Props) => {
   const [isFavorited, setIsFavorited] = useState<boolean>(false);
   const [username, setUsername] = useState<string>('');
-  const [friendReviews, setFriendReviews] = useState<Array<any>>([]);
+  const [reviews, setReviews] = useState<Array<any>>([]);
 
   useEffect(() => {
     checkPreviousStatus();
@@ -59,14 +59,38 @@ const DetailScreen = (props: Props) => {
               .once('value', snap => {
                 if (snap.val()) {
                   if (snap.hasChild(props.route.params.movie.id.toString())) {
-                    setFriendReviews(prevState => [
+                    setReviews(prevState => [
                       ...prevState,
-                      {name: username, review: snap.val()[props.route.params.movie.id.toString()].review},
+                      {
+                        name: username,
+                        review:
+                          snap.val()[props.route.params.movie.id.toString()]
+                            .review,
+                      },
                     ]);
                   }
                 }
               });
           });
+        });
+
+      database()
+        .ref('users')
+        .child(username)
+        .child('reviews')
+        .once('value', snap => {
+          if (snap.val()) {
+            if (snap.hasChild(props.route.params.movie.id.toString())) {
+              setReviews(prevState => [
+                ...prevState,
+                {
+                name: 'You',
+                review:
+                  snap.val()[props.route.params.movie.id.toString()].review,
+                },
+              ]);
+            }
+          }
         });
     }
   };
@@ -93,6 +117,15 @@ const DetailScreen = (props: Props) => {
     }
   };
 
+  const goToReviewScreen = () => {
+    if (username != '') {
+      props.navigation.navigate('ReviewScreen', {
+        movieID: props.route.params.movie.id.toString(),
+        userName: username,
+      });
+    }
+  };
+
   const setFavorite = () => {
     if (isFavorited) {
       setIsFavorited(false);
@@ -113,9 +146,15 @@ const DetailScreen = (props: Props) => {
     }
   };
 
-  const renderReviewItem = (item: {name: string, review: string}) => {
+  const renderReviewItem = (item: {name: string; review: string}) => {
     return (
-      <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15, height: 50}}>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          paddingHorizontal: 15,
+          height: 50,
+        }}>
         <Text style={styles.reviewTitle}>{item.name}</Text>
         <Text style={styles.reviewText}>{item.review}</Text>
       </View>
@@ -151,7 +190,16 @@ const DetailScreen = (props: Props) => {
             />
           </TouchableOpacity>
         </View>
-        <Text style={styles.title}>{props.route.params.movie.title}</Text>
+
+        <View style={styles.upperContainer}>
+          <Text style={styles.title}>{props.route.params.movie.title}</Text>
+          <TouchableOpacity
+            onPress={goToReviewScreen}
+            style={styles.reviewButton}>
+            <Text style={[styles.reviewTitle, {marginBottom: 10}]}>Review</Text>
+          </TouchableOpacity>
+        </View>
+
         <View style={{flexDirection: 'row'}}>
           <Text style={styles.genre}>•</Text>
           {props.route.params.movie.genre_ids.map(getGenreName)}
@@ -163,7 +211,7 @@ const DetailScreen = (props: Props) => {
         <Text style={styles.overview}>{props.route.params.movie.overview}</Text>
       </View>
 
-      {friendReviews.length !== 0 && (
+      {reviews.length !== 0 && (
         <View
           style={{
             flex: 1,
@@ -172,7 +220,7 @@ const DetailScreen = (props: Props) => {
             borderRadius: 30,
           }}>
           <FlatList
-            data={friendReviews}
+            data={reviews}
             renderItem={({item}) => renderReviewItem(item)}
             keyExtractor={(_, index) => index.toString()}
             showsVerticalScrollIndicator={false}
