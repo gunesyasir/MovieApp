@@ -8,8 +8,6 @@ import {Assets} from '../constants/Assets';
 import {MovieGenreCodes} from '../constants/Enums';
 import database from '@react-native-firebase/database';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {Colors} from 'react-native/Libraries/NewAppScreen';
-import {SafeAreaView} from 'react-native-safe-area-context';
 import {FlatList} from 'react-native-gesture-handler';
 
 type Props = StackScreenProps<StackParameterList, 'DetailScreen'>;
@@ -61,7 +59,6 @@ const DetailScreen = (props: Props) => {
               .once('value', snap => {
                 if (snap.val()) {
                   if (snap.hasChild(props.route.params.movie.id.toString())) {
-                    console.log(snap.val()[props.route.params.movie.id.toString()])
                     setFriendReviews(prevState => [
                       ...prevState,
                       {name: username, review: snap.val()[props.route.params.movie.id.toString()].review},
@@ -119,8 +116,8 @@ const DetailScreen = (props: Props) => {
   const renderReviewItem = (item: {name: string, review: string}) => {
     return (
       <View style={{flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 15, height: 50}}>
-        <Text style={{color: 'black', paddingStart: 15}}>{item.name}</Text>
-        <Text style={{color: 'black', paddingStart: 15}}>{item.review}</Text>
+        <Text style={styles.reviewTitle}>{item.name}</Text>
+        <Text style={styles.reviewText}>{item.review}</Text>
       </View>
     );
   };
@@ -178,6 +175,7 @@ const DetailScreen = (props: Props) => {
             data={friendReviews}
             renderItem={({item}) => renderReviewItem(item)}
             keyExtractor={(_, index) => index.toString()}
+            showsVerticalScrollIndicator={false}
           />
         </View>
       )}

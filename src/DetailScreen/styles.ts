@@ -5,12 +5,12 @@ export default StyleSheet.create({
     position: 'absolute',
     marginTop: 20,
     marginStart: 20,
-    padding: 5
+    padding: 5,
   },
   closeImage: {
-    width: 30, 
-    height: 30, 
-    tintColor: 'white'
+    width: 30,
+    height: 30,
+    tintColor: 'white',
   },
   genre: {
     color: 'white',
@@ -27,10 +27,10 @@ export default StyleSheet.create({
     marginEnd: 15,
   },
   image: {
-    flex: 2,
+    flex: 3,
   },
   movieInfoContainer: {
-    flex: 2,
+    flex: 3,
   },
   movieScoreContainer: {
     width: 100,
@@ -49,13 +49,27 @@ export default StyleSheet.create({
     opacity: 0.5,
   },
   reviewButton: {
-    backgroundColor: 'white', 
-    width: 100, 
-    height: 40, 
-    borderRadius: 150, 
-    marginRight: 15, 
-    alignItems: "center", 
-    justifyContent: "center"
+    backgroundColor: 'white',
+    width: 100,
+    height: 40,
+    borderRadius: 150,
+    marginRight: 15,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  reviewText: {
+    color: 'black',
+    marginStart: 2,
+    marginTop: 14,
+    fontSize: 10,
+    fontWeight: '500',
+  },
+  reviewTitle: {
+    color: 'gray',
+    paddingHorizontal: 5,
+    marginTop: 10,
+    fontSize: 14,
+    fontWeight: '600',
   },
   scoreContainer: {
     flexDirection: 'row',
@@ -76,13 +90,13 @@ export default StyleSheet.create({
     marginTop: 20,
     marginStart: 10,
     fontSize: 20,
-    fontWeight: '600'
+    fontWeight: '600',
   },
   titleContainer: {
-    flexDirection: 'row', 
-    alignItems: "center", 
-    justifyContent: "space-between"
-},
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
   upperContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
